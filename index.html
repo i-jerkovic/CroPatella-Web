@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f8f9">
+<title>CroPatella</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="assets/cropatella_logo.png">
+<style>
+:root{--navy:#1a365d;--blue:#2b6cb0;--lightblue:#7AC0FF;--yellow:#e6a817;--red:#c53030;--gray:#4a5568;--lightgray:#e2e8f0;--bg:#f7f8f9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:'Quicksand','Segoe UI',system-ui,-apple-system,sans-serif;color:#1a202c}
+.app-container{max-width:1200px;margin:0 auto;padding:32px 24px;min-height:100vh}
+header{text-align:center;margin-bottom:48px;padding:20px 0}
+.logo{height:260px;width:auto;max-width:100%;object-fit:contain;margin-bottom:24px}
+header h1{font-size:26px;font-weight:600;color:var(--navy);margin:0 auto 16px;max-width:780px;line-height:1.5;letter-spacing:.01em}
+.instructions{margin-bottom:24px;background:#f8fafb;border:1px solid var(--lightgray);border-left:4px solid var(--blue);border-radius:10px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.instructions summary{font-size:16px;font-weight:600;color:var(--navy);cursor:pointer}
+.instructions .inside{padding-top:16px;font-size:14px;line-height:1.6}
+.instructions ol,.instructions ul{font-size:14px;line-height:1.8;margin-bottom:20px}
+.instructions h4{font-size:16px;font-weight:600;color:var(--navy);margin:16px 0 10px}
+.instructions p{margin:0 0 8px}
+.instructions pre{font-size:12px;color:var(--navy);background:#f0f4f8;padding:10px;border-radius:6px;font-family:monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.reference{font-size:12px;color:var(--gray);margin-top:12px;font-style:italic;line-height:1.5}
+.main-layout{display:flex;gap:24px;align-items:flex-start}
+.left-column{flex:1;min-width:0}
+.right-column{width:420px;flex:0 0 420px;display:flex;flex-direction:column}
+.upload{position:relative;height:60px;line-height:56px;border:2px dashed var(--gray);border-radius:10px;text-align:center;margin-bottom:16px;background:white;font-size:14px;color:var(--gray);cursor:pointer;transition:border-color .2s}
+.upload:hover,.upload:focus-within,.upload.dragging{border-color:var(--blue);background:#ebf4ff}
+.upload input[type=file]{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.viewer{height:650px;border-radius:10px;overflow:hidden;border:1px solid var(--lightgray);background:white;position:relative}
+.viewer>div{width:100%;height:100%}
+.card{border-radius:12px;padding:20px 24px;margin-bottom:20px}
+.card-sex{background:#fff;border:2px solid var(--blue);box-shadow:0 4px 12px rgba(43,108,176,.1)}
+.card-info{background:#fffbf0;border:2px solid var(--yellow);box-shadow:0 4px 12px rgba(230,168,23,.1);margin-bottom:0}
+.card-title{font-size:20px;font-weight:600;color:var(--navy);margin-bottom:12px;letter-spacing:-.01em}
+.divider{height:1px;background:var(--lightgray);margin:12px 0 16px}
+#status-text{font-weight:600;font-size:14px;color:var(--navy);margin-bottom:12px;line-height:1.5}
+.field-label{font-size:14px;font-weight:500;color:var(--navy);margin:12px 0 4px;display:block}
+.field-input{display:block;width:100%;max-width:100%;padding:10px 12px;font-size:14px;border:2px solid var(--blue);border-radius:8px;background:#fff;font-family:inherit}
+#decision-text{font-weight:600}
+#plausibility-text{font-size:13px;color:var(--red);margin-top:12px;line-height:1.5}
+.card-info p{font-size:13px;color:var(--gray);line-height:1.6;margin:0 0 10px}
+.buttons{margin-top:16px;display:flex;gap:12px;flex-wrap:wrap}
+button{color:white;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit}
+.btn-clear{background:var(--gray)}.btn-example{background:var(--blue)}
+button:disabled{opacity:.6;cursor:wait}
+footer{margin-top:32px;padding:16px 0;border-top:1px solid var(--lightgray);text-align:center;font-size:12px;color:var(--gray);line-height:1.6}
+@media(max-width:900px){.main-layout{flex-direction:column}.left-column,.right-column{width:100%;flex:auto}.viewer{height:490px}}
+@media(max-width:520px){.app-container{padding:16px 12px}header{margin-bottom:24px}.logo{height:auto;max-height:190px}header h1{font-size:21px}.viewer{height:400px}.card{padding:18px}.buttons{gap:8px}button{flex:1;white-space:nowrap}}
+</style>
+</head>
+<body>
+<div class="app-container">
+<header>
+<img class="logo" src="assets/cropatella_logo.png" alt="CroPatella logo">
+<h1>CroPatella: patella-based sex estimator for Croatian population</h1>
+</header>
+<details class="instructions"><summary>Instructions, method, and performance</summary>
+<div class="inside">
+<ol>
+<li>Upload a patella STL file (or use one of the examples).</li>
+<li>The app automatically computes the centroid size — a rotation- and position-invariant measure of overall size.</li>
+<li>A logistic regression on the log of centroid size is applied to estimate sex.</li>
+<li>Results appear immediately. No landmark clicking required.</li>
+</ol>
+<h4>Method</h4>
+<p>The centroid size is the root-mean-square distance from the geometric centre of the patella to a dense sampling of points on its surface. It is invariant to rotation and translation: the same bone always yields the same value, regardless of how it is oriented in the CT scan.</p>
+<p>The deployed model is a logistic regression:</p>
+<pre>P(male) = 1 / (1 + exp(-(-16.8716 + 5.7939 × log(centroid_size_mm))))</pre>
+<p>The canonical deployed model was fitted on 300 left patellae (150 female and 150 male) from the seed-42 training partition. The complete analytical sample comprised 383 individuals (192 female and 191 male).</p>
+<p>For reproducible deployment, sampling seeds are derived from the uploaded mesh geometry. This preserves the selected 10,000-to-2,048-point feature definition but does not recreate the experiment's specimen-index sampling seeds.</p>
+<h4>Performance</h4>
+<ul>
+<li>Cross-validation accuracy: 0.848 ± 0.011</li>
+<li>Held-out left-patella accuracy: 0.858 ± 0.044</li>
+<li>Held-out sensitivity / specificity: 0.858 ± 0.040 / 0.858 ± 0.063</li>
+<li>Held-out PPV / NPV: 0.860 ± 0.056 / 0.858 ± 0.039</li>
+<li>Held-out AUC: 0.927 ± 0.027</li>
+<li>Contralateral right-patella accuracy: 0.853 ± 0.025</li>
+<li>Contralateral sensitivity / specificity: 0.858 ± 0.024 / 0.847 ± 0.051</li>
+<li>Contralateral PPV / NPV: 0.851 ± 0.040 / 0.857 ± 0.019</li>
+<li>Contralateral AUC: 0.918 ± 0.016</li>
+</ul>
+<div class="reference">The model was fitted on left patellae and was evaluated separately on contralateral right patellae. Either side may be uploaded, but the side should be recorded with the result.</div>
+</div></details>
+<div class="main-layout">
+<div class="left-column">
+<div class="upload" id="upload-area">Drag &amp; Drop or Select a Patella STL<input type="file" id="upload-stl" accept=".stl,model/stl,application/sla"></div>
+<div class="viewer"><div id="stl-viewer" aria-label="3D patella viewer"></div></div>
+</div>
+<div class="right-column">
+<section class="card card-sex"><div class="card-title">Sex estimation</div><div class="divider"></div>
+<div id="status-text" role="status">Upload a patella STL to begin.</div>
+<label class="field-label" for="centroid-size-text">Centroid size</label><input class="field-input" id="centroid-size-text" readonly>
+<label class="field-label" for="probability-text">P(male)</label><input class="field-input" id="probability-text" readonly>
+<label class="field-label" for="decision-text">Decision</label><input class="field-input" id="decision-text" readonly>
+<div id="plausibility-text"></div></section>
+<section class="card card-info"><div class="card-title">How to interpret</div><div class="divider"></div>
+<p><b>Centroid size </b>is the root-mean-square distance from sampled surface points to the centroid, in millimetres.</p>
+<p><b>P(male) ≥ 0.5 </b>→ classify as male; <b>&lt; 0.5 </b>→ classify as female.</p>
+<p style="margin-bottom:0"><b>Confidence </b>is highest when P is close to 0 or 1, and lowest near 0.5. The training distribution overlaps in the 17–19 mm range, so cases in this band carry more uncertainty.</p>
+</section></div></div>
+<div class="buttons"><button id="btn-clear" class="btn-clear">Clear</button><button id="btn-example-f" class="btn-example">Example — Female</button><button id="btn-example-m" class="btn-example">Example — Male</button></div>
+<footer>CroPatella — Croatian forensic anthropology research. Analytical sample: 383 individuals (192 female, 191 male; Split and Zagreb centres).<br>For research and educational use; not a substitute for expert forensic identification.</footer>
+</div>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script type="module" src="app.js?v=5361abcd"></script>
+</body></html>
